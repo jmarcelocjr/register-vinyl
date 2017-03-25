@@ -1,0 +1,15 @@
+phpserver:
+  build: ./php
+  volumes:
+    - ./../../../:/var/www/html
+  restart: always
+
+nginx:
+  build: ./nginx
+  ports:
+    - "1010:80"
+  volumes:
+    - ./../../../:/var/www/html
+  links:
+    - phpserver
+  restart: always

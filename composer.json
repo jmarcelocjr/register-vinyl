@@ -1,0 +1,25 @@
+{
+    "name": "mcerqueira/register-vinyl",
+    "require": {
+        "twbs/bootstrap": "^3.3",
+        "doctrine/orm": "^2.5",
+        "zendframework/zend-expressive": "^2.0",
+        "xtreamwayz/pimple-container-interop": "^1.0",
+        "zendframework/zend-expressive-aurarouter": "^2.0",
+        "twig/twig": "^2.0"
+    },
+    "authors": [
+        {
+            "name": "Marcelo Cerqueira",
+            "email": "jmarcelo.cjr@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RegisterVinyl\\": "src/"
+        }
+    },
+    "require-dev": {
+        "zfcampus/zf-development-mode": "^3.1"
+    }
+}

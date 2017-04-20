@@ -2,11 +2,11 @@
     "name": "mcerqueira/register-vinyl",
     "require": {
         "twbs/bootstrap": "^3.3",
-        "doctrine/orm": "^2.5",
         "zendframework/zend-expressive": "^2.0",
         "xtreamwayz/pimple-container-interop": "^1.0",
         "zendframework/zend-expressive-aurarouter": "^2.0",
-        "twig/twig": "^2.0"
+        "twig/twig": "^2.0",
+        "zendframework/zend-expressive-twigrenderer": "^1.4"
     },
     "authors": [
         {

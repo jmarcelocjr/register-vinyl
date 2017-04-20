@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<a class="btn btn-success" href="/vinyl">
+			<span class="glyphicon glyphicon-plus"></span>
+			Novo
+		</a>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<td>Título</td>
+					<td>Ano</td>
+					<td>Gênero</td>
+					<td>Ações</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for vinyl in vinyls %}
+					<tr data-id="{{ vinyl.getId() }}">
+						<td>{{ vinyl.getTitle() }}</td>
+						<td>{{ vinyl.getYear() }}</td>
+						<td>{{ vinyl.getGenre() }}</td>
+						<td>
+							<button type="button" class="btn btn-warning">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</button>
+							<button type="button" class="btn btn-danger">
+								<span class="glyphicon glyphicon-trash"></span>
+							</button>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if (total / 8) > 1 %}
+			<div class="row">
+				<div class="col-md-12 text-right">
+					{% for i in 1..((total/8)|round(0, 'ceil')) %}
+						<a href="/list-vinyl/{{ i }}" class="btn btn-primary"
+							{{ page == i ? "disabled" : "" }}
+						>
+							{{ i }}
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

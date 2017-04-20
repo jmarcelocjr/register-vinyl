@@ -1,7 +1,17 @@
+mysql:
+  image: mysql
+  environment:
+    MYSQL_DATABASE: register_vinyl
+    MYSQL_ROOT_PASSWORD: docker
+  volumes:
+    - /var/lib/mysql
+
 phpserver:
   build: ./php
   volumes:
     - ./../../../:/var/www/html
+  links:
+    - mysql
   restart: always
 
 nginx:

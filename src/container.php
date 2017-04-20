@@ -1,9 +1,20 @@
-<?php use Xtreamwayz\Pimple\Container as PimpleContainer; use Zend\Expressive\Container;
+<?php
+use Xtreamwayz\Pimple\Container as PimpleContainer;
+use Zend\Expressive\Container;
 
 $container = new PimpleContainer;
 
 $container['config'] = function () {
     return require __DIR__ . '/../config/config.php';
+};
+
+$container['db'] = function ($c) {
+    $db = $c['config']['db'];
+    return new PDO(
+            'mysql:host='.$db['host'].';dbname='.$db['database'],
+            $db['user'],
+            $db['password']
+    );
 };
 
 $container['twig'] = function ($c) {
@@ -25,9 +36,16 @@ $container['Zend\Expressive\Router\RouterInterface'] = function ($c) {
 
 $container['app'] = new Container\ApplicationFactory($c);
 
-$container['Zend\Expressive\Whoops'] = new Container\WhoopsFactory();
-$container['Zend\Expressive\WhoopsPageHandler'] = new Container\WhoopsPageHandlerFactory();
-$container['Zend\Expressive\Middleware\ErrorHandler'] = new Container\ErrorHandlerFactory();
-$container['Zend\Expressive\Middleware\ErrorResponseGenerator'] = new Container\WhoopsErrorResponseGeneratorFactory();
+$container[RegisterVinyl\Middleware\Vinyl\Table::class] = function ($c) {
+    return new RegisterVinyl\Middleware\Vinyl\Table($c['db'], $c['twig']);
+};
+
+$container[RegisterVinyl\Middleware\Vinyl\Form::class] = function ($c) {
+    return new RegisterVinyl\Middleware\Vinyl\Form($c['twig']);
+};
+
+$container[RegisterVinyl\Middleware\Vinyl\Add::class] = function ($c) {
+    return new RegisterVinyl\Middleware\Vinyl\Add($c['db']);
+};
 
 return $container;

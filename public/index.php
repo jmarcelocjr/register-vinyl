@@ -8,6 +8,12 @@ define('BASE_PATH', $container['config']['base']['path']);
 
 $app = $container['app'];
 
+$app->get('/', function($request, $delegate){
+    return new Zend\Diactoros\Response\EmptyResponse(302, [
+        'Location' => '/list-vinyl'
+    ]);
+});
+
 $app->get('/list-vinyl{/page}', \RegisterVinyl\Middleware\Vinyl\Table::class);
 
 $app->get('/vinyl', \RegisterVinyl\Middleware\Vinyl\Form::class);

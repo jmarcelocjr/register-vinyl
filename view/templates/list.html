@@ -27,12 +27,12 @@
 						<td>{{ vinyl.getYear() }}</td>
 						<td>{{ vinyl.getGenre() }}</td>
 						<td>
-							<button type="button" class="btn btn-warning">
+							<a href="/vinyl/{{ vinyl.getId() }}" type="button" class="btn btn-warning">
 								<span class="glyphicon glyphicon-pencil"></span>
-							</button>
-							<button type="button" class="btn btn-danger">
+							</a>
+							<a href="/vinyl/delete/{{ vinyl.getId() }}" type="button" class="btn btn-danger">
 								<span class="glyphicon glyphicon-trash"></span>
-							</button>
+							</a>
 						</td>
 					</tr>
 				{% endfor %}

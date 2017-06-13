@@ -1,5 +1,6 @@
 <?php
 namespace RegisterVinyl\Entity;
+use \PDO;
 
 class Vinyl
 {
@@ -8,14 +9,21 @@ class Vinyl
     protected $description;
     protected $year;
     protected $genre;
+    protected $format;
     protected $price;
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
         return $this;
@@ -26,7 +34,7 @@ class Vinyl
         return $this->title;
     }
 
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
         return $this;
@@ -37,7 +45,7 @@ class Vinyl
         return $this->description;
     }
 
-    public function setYear($year)
+    public function setYear(int $year)
     {
         $this->year = $year;
         return $this;
@@ -48,7 +56,7 @@ class Vinyl
         return $this->year;
     }
 
-    public function setGenre($genre)
+    public function setGenre(string $genre)
     {
         $this->genre = $genre;
         return $this;
@@ -59,28 +67,51 @@ class Vinyl
         return $this->genre;
     }
 
-    public function setPrice($price)
+    public function setFormat(string $format)
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    public function setPrice(float $price)
     {
         $this->price = $price;
         return $this;
     }
 
-    public function getPrice(): float
+    public function getPrice(): string
     {
-        return $this->price;
+        return number_format($this->price, 2, ',', '.');
     }
 
-    public function save(\PDO $db): bool
+    public function save(PDO $db): bool
     {
-        $sql = "INSERT INTO vinyl (title, description, genre, year, price)
-                VALUES (:title, :description, :genre, :year, :price);";
+        if (!empty($this->id)) {
+            $sql = "UPDATE vinyl SET title = :title, description = :description,
+                    genre = :genre, year = :year, format = :format, price = :price
+                    WHERE id = :id;";
+        } else {
+            $sql = "INSERT INTO vinyl (title, description, genre, year, format, price)
+                    VALUES (:title, :description, :genre, :year, :format, :price);";
+        }
 
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':title', $this->title, \PDO::PARAM_STR);
-        $stmt->bindValue(':description', $this->description, \PDO::PARAM_STR);
-        $stmt->bindValue(':genre', $this->genre, \PDO::PARAM_STR);
-        $stmt->bindValue(':year', $this->year, \PDO::PARAM_INT);
-        $stmt->bindValue(':price', $this->price, \PDO::PARAM_INT);
+
+        if (!empty($this->id)) {
+            $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
+        }
+
+        $stmt->bindValue(':title', $this->title, PDO::PARAM_STR);
+        $stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
+        $stmt->bindValue(':genre', $this->genre, PDO::PARAM_STR);
+        $stmt->bindValue(':year', $this->year, PDO::PARAM_INT);
+        $stmt->bindValue(':format', $this->format, PDO::PARAM_STR);
+        $stmt->bindValue(':price', $this->price, PDO::PARAM_INT);
 
         if(!$stmt->execute()){
             error_log(implode(', ', $stmt->errorInfo()));
@@ -92,30 +123,53 @@ class Vinyl
         return true;
     }
 
-    public static function get(\PDO $db, $id): Vinyl
+    public function delete(PDO $db): bool
+    {
+        $sql = "DELETE FROM vinyl WHERE id = :id";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+        if(!$stmt->execute()){
+            error_log(implode(', ', $stmt->errorInfo()));
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function get(PDO $db, $id): Vinyl
     {
         $sql = "SELECT * FROM vinyl WHERE id = :id";
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
-        $vinyl = $stmt->fetch(\PDO::FETCH_CLASS, Vinyl::class);
+        $vinylArray = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $vinyl = new self();
+        $vinyl->setId($vinylArray['id'])
+            ->setTitle($vinylArray['title'])
+            ->setDescription($vinylArray['description'])
+            ->setGenre($vinylArray['genre'])
+            ->setYear($vinylArray['year'])
+            ->setFormat($vinylArray['format'])
+            ->setPrice($vinylArray['price']);
 
         return $vinyl;
     }
 
-    public static function getAll(\PDO $db): array
+    public static function getAll(PDO $db): array
     {
-        $sql = "SELECT * FROM vinyl";
+        $sql = "SELECT * FROM vinyl ORDER BY title ASC";
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        $vinyls = $stmt->fetchAll(\PDO::FETCH_CLASS, Vinyl::class);
+        $vinyls = $stmt->fetchAll(PDO::FETCH_CLASS, Vinyl::class);
 
         return $vinyls;
     }
 
-    public static function getTotal(\PDO $db): int
+    public static function getTotal(PDO $db): int
     {
         $sql = "SELECT count(*) FROM vinyl";
         $stmt = $db->prepare($sql);
@@ -126,7 +180,7 @@ class Vinyl
         return $total;
     }
 
-    public static function getToTable(\PDO $db, $page = 1): array
+    public static function getToTable(PDO $db, $page = 1): array
     {
         $limit = 8;
         $start = (($page - 1) * $limit);
@@ -135,7 +189,7 @@ class Vinyl
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        $vinyls = $stmt->fetchAll(\PDO::FETCH_CLASS, Vinyl::class);
+        $vinyls = $stmt->fetchAll(PDO::FETCH_CLASS, Vinyl::class);
 
         return $vinyls;
 

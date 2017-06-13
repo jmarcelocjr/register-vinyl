@@ -9,10 +9,12 @@ use Zend\Expressive\Template\TemplateRendererInterface as TemplateInterface;
 class Form implements MiddlewareInterface
 {
     private $twig;
+    private $db;
 
-    public function __construct(TemplateInterface $twig)
+    public function __construct($db, TemplateInterface $twig)
     {
         $this->twig = $twig;
+        $this->db = $db;
     }
 
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
@@ -22,10 +24,10 @@ class Form implements MiddlewareInterface
             'title' => "Cadastro Vinyl"
         ];
 
-        $vinyl = $request->getAttribute('vinyl', false);
+        $id = $request->getAttribute('id', false);
 
-        if(!$vinyl){
-            $data['vinyl'] = $vinyl;
+        if($id) {
+            $data['vinyl'] = \RegisterVinyl\Entity\Vinyl::get($this->db, $id);
         }
 
         return new \Zend\Diactoros\Response\HtmlResponse(

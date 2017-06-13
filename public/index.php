@@ -16,10 +16,20 @@ $app->get('/', function($request, $delegate){
 
 $app->get('/list-vinyl{/page}', \RegisterVinyl\Middleware\Vinyl\Table::class);
 
-$app->get('/vinyl', \RegisterVinyl\Middleware\Vinyl\Form::class);
+$app->get('/vinyl{/id}', \RegisterVinyl\Middleware\Vinyl\Form::class);
+
 $app->post('/vinyl', [
-    \RegisterVinyl\Middleware\Vinyl\Add::class,
+    \RegisterVinyl\Middleware\Vinyl\Save::class,
     \RegisterVinyl\Middleware\Vinyl\Table::class
+]);
+
+$app->get('/vinyl/delete/{id}', [
+	\RegisterVinyl\Middleware\Vinyl\Delete::class,
+	function($request, $delegate){
+	    return new Zend\Diactoros\Response\EmptyResponse(302, [
+	        'Location' => '/list-vinyl'
+	    ]);
+	}
 ]);
 
 $app->pipeRoutingMiddleware();

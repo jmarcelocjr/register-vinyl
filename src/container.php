@@ -41,11 +41,15 @@ $container[RegisterVinyl\Middleware\Vinyl\Table::class] = function ($c) {
 };
 
 $container[RegisterVinyl\Middleware\Vinyl\Form::class] = function ($c) {
-    return new RegisterVinyl\Middleware\Vinyl\Form($c['twig']);
+    return new RegisterVinyl\Middleware\Vinyl\Form($c['db'], $c['twig']);
 };
 
-$container[RegisterVinyl\Middleware\Vinyl\Add::class] = function ($c) {
-    return new RegisterVinyl\Middleware\Vinyl\Add($c['db']);
+$container[RegisterVinyl\Middleware\Vinyl\Save::class] = function ($c) {
+    return new RegisterVinyl\Middleware\Vinyl\Save($c['db']);
+};
+
+$container[RegisterVinyl\Middleware\Vinyl\Delete::class] = function ($c) {
+    return new RegisterVinyl\Middleware\Vinyl\Delete($c['db']);
 };
 
 return $container;

@@ -1,28 +1,80 @@
 {% extends "base.html" %}
 
+{% set generos = [
+	'ROCK',
+	'ELECTRONIC',
+	'POP',
+	'FUNK/SOUL',
+	'HIP HOP',
+	'CLASSICAL',
+	'LATIN',
+	'REGGAE',
+	'BLUES',
+	'MEGA MIX',
+	'POP ROCK',
+	'ELECTRO',
+	'DEEP HOUSE',
+	'HOUSE',
+	'FLASH HOUSE',
+	'FLASH DANCE',
+	'MIANI BASS',
+	'FREE STYLE',
+	'BLACK MUSIC',
+	'PSYCADELIC'
+] %}
+
+{% set formatos = [
+	'7\'',
+	'10\'',
+	'12\'',
+	'LP',
+	'PICTURE',
+	'CD ALBUM',
+	'CD SINGLE'
+] %}
+
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
 	<form action="/vinyl" method="POST" enctype="multipart/form-data">
+		<input type="hidden" name="id" value="{{ vinyl.getId() }}">
 		<div class="form-group">
 			<label for="vinyl-titulo">Titúlo</label>
-			<input type="text" class="form-control" id="vinyl-titulo" name="titulo" placeholder="Titúlo"/>
+			<input type="text" class="form-control" id="vinyl-titulo" name="titulo" placeholder="Titúlo" value="{{ vinyl.getTitle() }}"/>
 		</div>
 		<div class="form-group">
 			<label for="vinyl-descricao">Descrição</label>
-			<textarea name="" class="form-control" id="vinyl-descricao" name="descricao"></textarea>
+			<textarea name="descricao" class="form-control" id="vinyl-descricao" name="descricao">{% spaceless %}
+				{{ vinyl.getDescription() }}
+			{% endspaceless %}</textarea>
 		</div>
 		<div class="form-group">
 			<label for="vinyl-ano">Ano</label>
-			<input type="text" class="form-control" id="vinyl-ano" name="ano" placeholder="1993"/>
+			<select class="form-control" name="ano" id="vinyl-ano">
+				{% for i in 2020..1950 %}
+					<option value="{{ i }}" {{ vinyl.getYear() == i ? 'selected' : '' }}>{{ i }}</option>
+				{% endfor %}
+			</select>
 		</div>
 		<div class="form-group">
 			<label for="vinyl-genero">Genêro</label>
-			<input type="text" class="form-control" id="vinyl-genero" name="genero" placeholder="Rock,Dance,Pop..."/>
+			<select class="form-control" name="genero" id="vinyl-genero">
+				{% for genero in generos %}
+					<option value="{{ genero }}" {{ vinyl.getGenre() == genero ? 'selected' : '' }}>{{ genero }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="vinyl-formato">Formato</label>
+			<select class="form-control" name="formato" id="vinyl-formato">
+				{% for formato in formatos %}
+					<option value="{{ formato }}" {{ vinyl.getFormat() == formato ? 'selected' : '' }}>{{ formato }}</option>
+				{% endfor %}
+			</select>
 		</div>
 		<div class="form-group">
 			<label for="vinyl-preco">Preço</label>
-			<input type="text" class="form-control" id="vinyl-preco" name="preco" placeholder="R$ 150,00"/>
+			<input type="text" class="form-control money" id="vinyl-preco" name="preco" placeholder="R$ 150,00" value=" {{ vinyl.getPrice() }}" />
 		</div>
 		<div class="form-group">
 			<label for="vinyl-foto">Fotos</label>
@@ -35,4 +87,14 @@
 	</form>
 	</div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="/assets/js/maskMoney.js" type="text/javascript"></script>
+	<script>
+		(function(){
+			$('.money').maskMoney({prefix:'R$ ', thousands:'.', decimal:','});
+			$('.money').trigger('mask.maskMoney');
+		})();
+	</script>
 {% endblock %}

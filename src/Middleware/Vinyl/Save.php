@@ -6,7 +6,7 @@ use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RegisterVinyl\Entity\Vinyl;
 
-class Add implements MiddlewareInterface
+class Save implements MiddlewareInterface
 {
     private $db;
 
@@ -21,15 +21,29 @@ class Add implements MiddlewareInterface
 
         $post = $request->getParsedBody();
 
-        $vinyl = new Vinyl();
+        $preco = str_replace(
+            "R$ ", "", str_replace(
+                            ",", ".", str_replace(
+                                        ".", "", $post['preco']
+                                    )
+                        )
+        );
 
+        $preco = floatval($preco);
+
+        $vinyl = new Vinyl();
         $vinyl->setTitle($post['titulo'])
             ->setDescription($post['descricao'])
             ->setyear($post['ano'])
             ->setGenre($post['genero'])
-            ->setPrice($post['preco']);
+            ->setFormat($post['formato'])
+            ->setPrice($preco);
 
-        if(!$vinyl->save($this->db)){
+        if (isset($post['id']) && !empty($post['id'])) {
+            $vinyl->setId($post['id']);
+        }
+
+        if (!$vinyl->save($this->db)) {
             $request = $request->withAttribute('add', false);
             return $delegate->process($request);
         }

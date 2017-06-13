@@ -5,5 +5,6 @@ CREATE TABLE vinyl (
 	description TEXT,
 	year YEAR(4) DEFAULT 0,
 	genre VARCHAR(50),
+	format varchar(25),
 	price FLOAT DEFAULT 0
 );

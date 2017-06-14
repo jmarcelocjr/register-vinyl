@@ -33,6 +33,13 @@
 	'CD SINGLE'
 ] %}
 
+{% set conditions = [
+	{ "key": "VG", "value": "(VG) - muito bom mas com marcas no disco como pequenos riscos" },
+	{ "key": "VG+", "value": "(VG+) - muito bom com poucas marcas poucos riscos" },
+	{ "key": "NM", "value": "(NM) - near mint perfeito sem riscos" },
+	{ "key": "M", "value": "(M) - mint lacrado ou estava lacrado e foi aberto" }
+] %}
+
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
@@ -47,6 +54,14 @@
 			<textarea name="descricao" class="form-control" id="vinyl-descricao" name="descricao">{% spaceless %}
 				{{ vinyl.getDescription() }}
 			{% endspaceless %}</textarea>
+		</div>
+		<div class="form-group">
+			<label for="vinyl-condicao">Condição do Vinyl</label>
+			<select class="form-control" name="condicao" id="vinyl-condicao">
+				{% for condition in conditions %}
+					<option value="{{ condition.key }}" {{ vinyl.getCondition() == condition.key ? 'selected' : '' }}>{{ condition.value }}</option>
+				{% endfor %}
+			</select>
 		</div>
 		<div class="form-group">
 			<label for="vinyl-ano">Ano</label>

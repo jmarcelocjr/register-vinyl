@@ -5,12 +5,13 @@ use \PDO;
 class Vinyl
 {
     protected $id;
-    protected $title;
-    protected $description;
-    protected $year;
-    protected $genre;
-    protected $format;
-    protected $price;
+    protected $title = '';
+    protected $description = '';
+    protected $year = date('Y');
+    protected $genre = '';
+    protected $format = '';
+    protected $condition = '';
+    protected $price = 0;
 
     public function setId(int $id)
     {
@@ -78,6 +79,17 @@ class Vinyl
         return $this->format;
     }
 
+    public function setCondition(string $condition)
+    {
+        $this->condition = $condition;
+        return $this;
+    }
+
+    public function getCondition(): string
+    {
+        return $this->condition;
+    }
+
     public function setPrice(float $price)
     {
         $this->price = $price;
@@ -93,11 +105,12 @@ class Vinyl
     {
         if (!empty($this->id)) {
             $sql = "UPDATE vinyl SET title = :title, description = :description,
-                    genre = :genre, year = :year, format = :format, price = :price
+                    genre = :genre, year = :year, format = :format,
+                    condition = :condition, price = :price
                     WHERE id = :id;";
         } else {
-            $sql = "INSERT INTO vinyl (title, description, genre, year, format, price)
-                    VALUES (:title, :description, :genre, :year, :format, :price);";
+            $sql = "INSERT INTO vinyl (title, description, genre, year, format, condition, price)
+                    VALUES (:title, :description, :genre, :year, :format, :condition, :price);";
         }
 
         $stmt = $db->prepare($sql);
@@ -111,6 +124,7 @@ class Vinyl
         $stmt->bindValue(':genre', $this->genre, PDO::PARAM_STR);
         $stmt->bindValue(':year', $this->year, PDO::PARAM_INT);
         $stmt->bindValue(':format', $this->format, PDO::PARAM_STR);
+        $stmt->bindValue(':condition', $this->condition, PDO::PARAM_STR);
         $stmt->bindValue(':price', $this->price, PDO::PARAM_INT);
 
         if(!$stmt->execute()){
@@ -160,7 +174,7 @@ class Vinyl
 
     public static function getAll(PDO $db): array
     {
-        $sql = "SELECT * FROM vinyl ORDER BY title ASC";
+        $sql = "SELECT * FROM vinyl";
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
@@ -185,13 +199,12 @@ class Vinyl
         $limit = 8;
         $start = (($page - 1) * $limit);
 
-        $sql = "SELECT * FROM vinyl LIMIT {$start}, {$limit}";
+        $sql = "SELECT * FROM vinyl ORDER BY title ASC LIMIT {$start}, {$limit}";
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
         $vinyls = $stmt->fetchAll(PDO::FETCH_CLASS, Vinyl::class);
 
         return $vinyls;
-
     }
 }

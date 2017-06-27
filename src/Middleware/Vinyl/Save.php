@@ -38,6 +38,7 @@ class Save implements MiddlewareInterface
             ->setGenre($post['genero'])
             ->setFormat($post['formato'])
             ->setCondition($post['condicao'])
+            ->setBelongsTo($post['pertence'])
             ->setPrice($preco);
 
         if (isset($post['id']) && !empty($post['id'])) {

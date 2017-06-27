@@ -20,7 +20,12 @@
 	'MIANI BASS',
 	'FREE STYLE',
 	'BLACK MUSIC',
-	'PSYCADELIC'
+	'PSYCADELIC',
+	'CAMISETA NAC',
+	'CAMISETA IMP',
+	'BONÉ NAC',
+	'BONÉ IMP',
+	'OUTROS'
 ] %}
 
 {% set formatos = [
@@ -30,7 +35,14 @@
 	'LP',
 	'PICTURE',
 	'CD ALBUM',
-	'CD SINGLE'
+	'CD SINGLE',
+	'CD DUPLO',
+	'LP DUPLO',
+	'DVD NAC',
+	'DVD NAC DUPLO',
+	'DVD IMP',
+	'DVD IMP DUPLO',
+	'OUTROS'
 ] %}
 
 {% set conditions = [
@@ -38,6 +50,14 @@
 	{ "key": "VG+", "value": "(VG+) - muito bom com poucas marcas poucos riscos" },
 	{ "key": "NM", "value": "(NM) - near mint perfeito sem riscos" },
 	{ "key": "M", "value": "(M) - mint lacrado ou estava lacrado e foi aberto" }
+] %}
+
+{% set belongs = [
+	'NJ',
+	'JMC',
+	'CASA JMC',
+	'CONSIGNADO',
+	'OUTROS',
 ] %}
 
 {% block content %}
@@ -84,6 +104,14 @@
 			<select class="form-control" name="formato" id="vinyl-formato">
 				{% for formato in formatos %}
 					<option value="{{ formato }}" {{ vinyl.getFormat() == formato ? 'selected' : '' }}>{{ formato }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="vinyl-pertence">Pertence</label>
+			<select class="form-control" name="pertence" id="vinyl-pertence">
+				{% for b in belongs %}
+					<option value="{{ b }}" {{ vinyl.belongsTo() == b ? 'selected' : '' }}>{{ b }}</option>
 				{% endfor %}
 			</select>
 		</div>

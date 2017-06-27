@@ -7,11 +7,17 @@ class Vinyl
     protected $id;
     protected $title = '';
     protected $description = '';
-    protected $year = date('Y');
+    protected $year;
     protected $genre = '';
     protected $format = '';
     protected $condition = '';
+    protected $belongsTo = '';
     protected $price = 0;
+
+    public function __construct()
+    {
+        $this->year = (int) date('Y');
+    }
 
     public function setId(int $id)
     {
@@ -90,6 +96,17 @@ class Vinyl
         return $this->condition;
     }
 
+    public function setBelongsTo(string $belongsTo)
+    {
+        $this->belongsTo = $belongsTo;
+        return $this;
+    }
+
+    public function getBelongsTo(): string
+    {
+        return $this->belongsTo;
+    }
+
     public function setPrice(float $price)
     {
         $this->price = $price;
@@ -106,11 +123,11 @@ class Vinyl
         if (!empty($this->id)) {
             $sql = "UPDATE vinyl SET title = :title, description = :description,
                     genre = :genre, year = :year, format = :format,
-                    condition = :condition, price = :price
+                    stateOfUse = :condition, belongsTo = :belongsTo, price = :price
                     WHERE id = :id;";
         } else {
-            $sql = "INSERT INTO vinyl (title, description, genre, year, format, condition, price)
-                    VALUES (:title, :description, :genre, :year, :format, :condition, :price);";
+            $sql = "INSERT INTO vinyl (title, description, genre, year, format, stateOfUse, belongsTo, price)
+                    VALUES (:title, :description, :genre, :year, :format, :condition, :belongsTo, :price);";
         }
 
         $stmt = $db->prepare($sql);
@@ -125,6 +142,7 @@ class Vinyl
         $stmt->bindValue(':year', $this->year, PDO::PARAM_INT);
         $stmt->bindValue(':format', $this->format, PDO::PARAM_STR);
         $stmt->bindValue(':condition', $this->condition, PDO::PARAM_STR);
+        $stmt->bindValue(':belongsTo', $this->belongsTo, PDO::PARAM_STR);
         $stmt->bindValue(':price', $this->price, PDO::PARAM_INT);
 
         if(!$stmt->execute()){
@@ -167,6 +185,8 @@ class Vinyl
             ->setGenre($vinylArray['genre'])
             ->setYear($vinylArray['year'])
             ->setFormat($vinylArray['format'])
+            ->setCondition($vinylArray['condition'])
+            ->setBelongsTo($vinylArray['belongsTo'])
             ->setPrice($vinylArray['price']);
 
         return $vinyl;
